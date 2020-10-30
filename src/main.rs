@@ -1,10 +1,10 @@
 use dotenv;
 
-use uuid::Uuid;
 use serde::{Deserialize, Serialize};
 use sqlx::Pool;
 use sqlx::{query, query_as, PgPool};
 use tide::{Body, Request, Response, Server};
+use uuid::Uuid;
 
 #[derive(Clone, Debug)]
 struct State {
@@ -14,7 +14,7 @@ struct State {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 struct Dino {
-    id: Uuid, 
+    id: Uuid,
     name: String,
     weight: i32,
     diet: String,
@@ -39,7 +39,10 @@ impl RestEntity {
             INSERT INTO dinos (id, name, weight, diet) VALUES
             ($1, $2, $3, $4) returning id, name, weight, diet
             "#,
-            dino.id, dino.name, dino.weight, dino.diet
+            dino.id,
+            dino.name,
+            dino.weight,
+            dino.diet
         )
         .fetch_one(&db_pool)
         .await?;
@@ -79,7 +82,7 @@ impl RestEntity {
         .await?;
 
         let res = match row {
-            None => { Response::new(404) },
+            None => Response::new(404),
             Some(row) => {
                 let mut r = Response::new(200);
                 r.set_body(Body::from_json(&row)?);
@@ -101,13 +104,16 @@ impl RestEntity {
             WHERE id = $1
             returning id, name, weight, diet
             "#,
-            id, dino.name, dino.weight, dino.diet
+            id,
+            dino.name,
+            dino.weight,
+            dino.diet
         )
         .fetch_optional(&db_pool)
         .await?;
 
         let res = match row {
-            None => { Response::new(404) },
+            None => Response::new(404),
             Some(row) => {
                 let mut r = Response::new(200);
                 r.set_body(Body::from_json(&row)?);
@@ -133,8 +139,8 @@ impl RestEntity {
         .await?;
 
         let res = match row {
-            None => { Response::new(404) },
-            Some(_) => { Response::new(204) }
+            None => Response::new(404),
+            Some(_) => Response::new(204),
         };
 
         Ok(res)
@@ -202,7 +208,7 @@ async fn list_dinos() -> tide::Result<()> {
     use tide::http::{Method, Request, Response, Url};
 
     let dino = Dino {
-        id : Uuid::new_v4(),
+        id: Uuid::new_v4(),
         name: String::from("test"),
         weight: 50,
         diet: String::from("carnivorous"),
@@ -229,7 +235,7 @@ async fn create_dino() -> tide::Result<()> {
     use tide::http::{Method, Request, Response, Url};
 
     let dino = Dino {
-        id : Uuid::new_v4(),
+        id: Uuid::new_v4(),
         name: String::from("test"),
         weight: 50,
         diet: String::from("carnivorous"),
@@ -252,7 +258,7 @@ async fn get_dino() -> tide::Result<()> {
     use tide::http::{Method, Request, Response, Url};
 
     let dino = Dino {
-        id : Uuid::new_v4(),
+        id: Uuid::new_v4(),
         name: String::from("test_get"),
         weight: 500,
         diet: String::from("carnivorous"),
@@ -266,7 +272,10 @@ async fn get_dino() -> tide::Result<()> {
         INSERT INTO dinos (id, name, weight, diet) VALUES
         ($1, $2, $3, $4) returning id, name, weight, diet
         "#,
-        dino.id, dino.name, dino.weight, dino.diet
+        dino.id,
+        dino.name,
+        dino.weight,
+        dino.diet
     )
     .fetch_one(&db_pool)
     .await?;
@@ -288,7 +297,7 @@ async fn update_dino() -> tide::Result<()> {
     use tide::http::{Method, Request, Response, Url};
 
     let mut dino = Dino {
-        id : Uuid::new_v4(),
+        id: Uuid::new_v4(),
         name: String::from("test_update"),
         weight: 500,
         diet: String::from("carnivorous"),
@@ -302,7 +311,10 @@ async fn update_dino() -> tide::Result<()> {
         INSERT INTO dinos (id, name, weight, diet) VALUES
         ($1, $2, $3, $4) returning id, name, weight, diet
         "#,
-        dino.id, dino.name, dino.weight, dino.diet
+        dino.id,
+        dino.name,
+        dino.weight,
+        dino.diet
     )
     .fetch_one(&db_pool)
     .await?;
@@ -328,7 +340,7 @@ async fn delete_dino() -> tide::Result<()> {
     use tide::http::{Method, Request, Response, Url};
 
     let dino = Dino {
-        id : Uuid::new_v4(),
+        id: Uuid::new_v4(),
         name: String::from("test_delete"),
         weight: 500,
         diet: String::from("carnivorous"),
@@ -342,7 +354,10 @@ async fn delete_dino() -> tide::Result<()> {
         INSERT INTO dinos (id, name, weight, diet) VALUES
         ($1, $2, $3, $4) returning id, name, weight, diet
         "#,
-        dino.id, dino.name, dino.weight, dino.diet
+        dino.id,
+        dino.name,
+        dino.weight,
+        dino.diet
     )
     .fetch_one(&db_pool)
     .await?;
