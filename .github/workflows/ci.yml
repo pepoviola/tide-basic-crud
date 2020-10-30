@@ -18,6 +18,8 @@ jobs:
 
     - name: Build
       run: cargo build
+      env:
+          DATABASE_URL: ""
 
 #    - name: Run tests
 #      run: cargo test
