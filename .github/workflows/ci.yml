@@ -19,7 +19,7 @@ jobs:
     - name: Build
       run: cargo build
       env:
-          DATABASE_URL: ""
+          DATABASE_URL: "postgresql://postgres@localhost:5432/demo"
 
 #    - name: Run tests
 #      run: cargo test
