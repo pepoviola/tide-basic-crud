@@ -51,3 +51,5 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         args: --all-features
+      env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/tide
