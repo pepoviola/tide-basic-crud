@@ -33,7 +33,7 @@ jobs:
       working-directory: tests
       env:
         # the in-container port is always 5432
-        DATABASE_URL: postgres://postgres:postgres@localhost:5432/todos
+        DATABASE_URL: postgres://postgres:postgres@localhost:5432/tide
       run: |
         export CONTAINER_ID=$(docker ps --filter "ancestor=postgres:12" --format "{{.ID}}")
         docker cp schema.sql $CONTAINER_ID:/schema.sql
