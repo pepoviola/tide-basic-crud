@@ -1,5 +1,3 @@
-use dotenv;
-
 use serde::{Deserialize, Serialize};
 use sqlx::Pool;
 use sqlx::{query, query_as, PgPool};
