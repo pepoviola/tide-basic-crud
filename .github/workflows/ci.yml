@@ -47,7 +47,7 @@ jobs:
     - name: Run test
       run: cargo test --tests
       env:
-          DATABASE_URL_TEST: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/tide
+          DATABASE_URL: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/tide
 
     - uses: actions-rs/clippy-check@v1
       with:
