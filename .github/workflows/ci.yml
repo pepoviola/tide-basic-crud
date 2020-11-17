@@ -45,7 +45,7 @@ jobs:
           DATABASE_URL: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/tide
 
     - name: Run test
-      run: cargo test
+      run: cargo test --tests
       env:
           DATABASE_URL_TEST: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/tide
 

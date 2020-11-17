@@ -224,7 +224,7 @@ mod tests {
 
     lazy_static! {
         static ref DB_URL: String =
-            std::env::var("DATABASE_URL_TEST").expect("missing env var DATABASE_URL_TEST");
+            std::env::var("DATABASE_URL").expect("missing env var DATABASE_URL");
     }
 
     async fn clear_dinos() -> Result<(), Box<dyn std::error::Error>> {
