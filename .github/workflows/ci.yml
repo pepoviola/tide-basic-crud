@@ -33,16 +33,16 @@ jobs:
       working-directory: tests
       env:
         # the in-container port is always 5432
-        DATABASE_URL_TEST: postgres://postgres:postgres@localhost:5432/tide
+        DATABASE_URL: postgres://postgres:postgres@localhost:5432/tide
       run: |
         export CONTAINER_ID=$(docker ps --filter "ancestor=postgres:12" --format "{{.ID}}")
         docker cp schema.sql $CONTAINER_ID:/schema.sql
-        docker exec $CONTAINER_ID bash -c "psql -d $DATABASE_URL_TEST -f ./schema.sql"
+        docker exec $CONTAINER_ID bash -c "psql -d $DATABASE_URL -f ./schema.sql"
 
     - name: Build
       run: cargo build
       env:
-          DATABASE_URL_TEST: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/tide
+          DATABASE_URL: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/tide
 
     - name: Run test
       run: cargo test
@@ -54,4 +54,4 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         args: --all-features
       env:
-          DATABASE_URL_TEST: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/tide
+          DATABASE_URL: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/tide
