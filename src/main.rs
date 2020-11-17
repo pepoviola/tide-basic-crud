@@ -223,10 +223,11 @@ mod tests {
     use sqlx::query;
 
     lazy_static! {
-        static ref DB_URL: String = std::env::var("DATABASE_URL_TEST").expect("missing env var DATABASE_URL_TEST");
+        static ref DB_URL: String =
+            std::env::var("DATABASE_URL_TEST").expect("missing env var DATABASE_URL_TEST");
     }
 
-    async fn clear_dinos() -> Result<(),Box<dyn std::error::Error>> {
+    async fn clear_dinos() -> Result<(), Box<dyn std::error::Error>> {
         let db_pool = make_db_pool(&DB_URL).await;
 
         sqlx::query("DELETE FROM dinos").execute(&db_pool).await?;
@@ -236,23 +237,27 @@ mod tests {
     #[async_std::test]
     async fn list_dinos() -> tide::Result<()> {
         dotenv::dotenv().ok();
-        clear_dinos().await.expect("Failed to clear the dinos table");
+        clear_dinos()
+            .await
+            .expect("Failed to clear the dinos table");
 
-       let db_pool = make_db_pool(&DB_URL).await;
-       let app = server(db_pool).await;
+        let db_pool = make_db_pool(&DB_URL).await;
+        let app = server(db_pool).await;
 
-       let res = surf::Client::with_http_client(app)
-           .get("https://example.com/dinos")
-           .await?;
+        let res = surf::Client::with_http_client(app)
+            .get("https://example.com/dinos")
+            .await?;
 
-       assert_eq!(200, res.status());
-       Ok(())
+        assert_eq!(200, res.status());
+        Ok(())
     }
 
     #[async_std::test]
     async fn create_dino() -> tide::Result<()> {
         dotenv::dotenv().ok();
-        clear_dinos().await.expect("Failed to clear the dinos table");
+        clear_dinos()
+            .await
+            .expect("Failed to clear the dinos table");
 
         use assert_json_diff::assert_json_eq;
 
@@ -281,7 +286,9 @@ mod tests {
     #[async_std::test]
     async fn get_dino() -> tide::Result<()> {
         dotenv::dotenv().ok();
-        clear_dinos().await.expect("Failed to clear the dinos table");
+        clear_dinos()
+            .await
+            .expect("Failed to clear the dinos table");
 
         use assert_json_diff::assert_json_eq;
 
@@ -327,7 +334,9 @@ mod tests {
     #[async_std::test]
     async fn update_dino() -> tide::Result<()> {
         dotenv::dotenv().ok();
-        clear_dinos().await.expect("Failed to clear the dinos table");
+        clear_dinos()
+            .await
+            .expect("Failed to clear the dinos table");
 
         use assert_json_diff::assert_json_eq;
 
@@ -376,7 +385,9 @@ mod tests {
     #[async_std::test]
     async fn delete_dino() -> tide::Result<()> {
         dotenv::dotenv().ok();
-        clear_dinos().await.expect("Failed to clear the dinos table");
+        clear_dinos()
+            .await
+            .expect("Failed to clear the dinos table");
 
         let dino = Dino {
             id: Uuid::new_v4(),
@@ -413,4 +424,3 @@ mod tests {
         Ok(())
     }
 }
-
