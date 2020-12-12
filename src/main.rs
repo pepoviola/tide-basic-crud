@@ -1,16 +1,16 @@
 use serde::{Deserialize, Serialize};
 use sqlx::Pool;
 use sqlx::{query, query_as, PgPool};
-use tide::{Body, Request, Response, Server, Error};
-use uuid::Uuid;
-use tide::prelude::*;
 use tera::Tera;
+use tide::prelude::*;
+use tide::{Body, Error, Request, Response, Server};
 use tide_tera::prelude::*;
+use uuid::Uuid;
 
 #[derive(Clone, Debug)]
 struct State {
     db_pool: PgPool,
-    tera: Tera
+    tera: Tera,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -34,7 +34,7 @@ impl RestEntity {
     async fn create(mut req: Request<State>) -> tide::Result {
         let dino: Dino = req.body_json().await?;
         let db_pool = req.state().db_pool.clone();
-        let row : Dino =  match query_as!(
+        let row: Dino = match query_as!(
             Dino,
             r#"
             INSERT INTO dinos (id, name, weight, diet) VALUES
@@ -46,15 +46,15 @@ impl RestEntity {
             dino.diet
         )
         .fetch_one(&db_pool)
-        .await {
-            Ok( r) => r,
-            Err( e ) => {
+        .await
+        {
+            Ok(r) => r,
+            Err(e) => {
                 // TODO: we may want to cast the error here.
-                let err = Error::new(409,e);
+                let err = Error::new(409, e);
                 return Err(err);
             }
         };
-
 
         let mut res = Response::new(201);
         res.set_body(Body::from_json(&row)?);
@@ -164,7 +164,10 @@ async fn main() {
     let db_pool = make_db_pool(&db_url).await;
 
     let app = server(db_pool).await;
-    let mut listener = app.bind("127.0.0.1:8080").await.expect("can't bind the port");
+    let mut listener = app
+        .bind("127.0.0.1:8080")
+        .await
+        .expect("can't bind the port");
 
     for info in listener.info().iter() {
         println!("Server listening on {}", info);
@@ -196,7 +199,7 @@ async fn server(db_pool: PgPool) -> Server<State> {
     let mut app = tide::with_state(state);
 
     // index page
-    app.at("/").get( |req: tide::Request<State> | async move {
+    app.at("/").get(|req: tide::Request<State>| async move {
         let tera = req.state().tera.clone();
         let db_pool = req.state().db_pool.clone();
         let rows = query_as!(
@@ -207,51 +210,62 @@ async fn server(db_pool: PgPool) -> Server<State> {
         )
         .fetch_all(&db_pool)
         .await?;
-        tera.render_response("index.html", &context! {
-            "title" => String::from("Tide basic CRUD"),
-            "dinos" => rows
-         })
-    } );
+        tera.render_response(
+            "index.html",
+            &context! {
+               "title" => String::from("Tide basic CRUD"),
+               "dinos" => rows
+            },
+        )
+    });
 
     // new dino
-    app.at("/dinos/new").get( |req: tide::Request<State> | async move {
-        let tera = req.state().tera.clone();
+    app.at("/dinos/new")
+        .get(|req: tide::Request<State>| async move {
+            let tera = req.state().tera.clone();
 
-        tera.render_response("form.html", &context! {
-            "title" => String::from("Create new dino")
-         })
-    } );
+            tera.render_response(
+                "form.html",
+                &context! {
+                   "title" => String::from("Create new dino")
+                },
+            )
+        });
     // edit dino
-    app.at("/dinos/:id/edit").get( |req: tide::Request<State> | async move {
-        let tera = req.state().tera.clone();
-        let db_pool = req.state().db_pool.clone();
-        let id: Uuid = Uuid::parse_str(req.param("id")?).unwrap();
-        let row = query_as!(
-            Dino,
-            r#"
+    app.at("/dinos/:id/edit")
+        .get(|req: tide::Request<State>| async move {
+            let tera = req.state().tera.clone();
+            let db_pool = req.state().db_pool.clone();
+            let id: Uuid = Uuid::parse_str(req.param("id")?).unwrap();
+            let row = query_as!(
+                Dino,
+                r#"
             SELECT  id, name, weight, diet from dinos
             WHERE id = $1
             "#,
-            id
-        )
-        .fetch_optional(&db_pool)
-        .await?;
+                id
+            )
+            .fetch_optional(&db_pool)
+            .await?;
 
-        let res = match row {
-            None => Response::new(404),
-            Some(row) => {
-                let mut r = Response::new(200);
-                let b = tera.render_body("form.html", &context! {
-                        "title" => String::from("Edit dino"),
-                        "dino" => row
-                    })?;
-                r.set_body(b);
-                r
-            }
-        };
+            let res = match row {
+                None => Response::new(404),
+                Some(row) => {
+                    let mut r = Response::new(200);
+                    let b = tera.render_body(
+                        "form.html",
+                        &context! {
+                            "title" => String::from("Edit dino"),
+                            "dino" => row
+                        },
+                    )?;
+                    r.set_body(b);
+                    r
+                }
+            };
 
-        Ok(res)
-    } );
+            Ok(res)
+        });
 
     let dinos_endpoint = RestEntity {
         base_path: String::from("/dinos"),
@@ -259,7 +273,9 @@ async fn server(db_pool: PgPool) -> Server<State> {
 
     register_rest_entity(&mut app, dinos_endpoint);
 
-    app.at("/public").serve_dir("./public/").expect("Invalid static file directory");
+    app.at("/public")
+        .serve_dir("./public/")
+        .expect("Invalid static file directory");
 
     app
 }
@@ -464,7 +480,7 @@ mod tests {
         let db_pool = make_db_pool(&DB_URL).await;
         let app = server(db_pool).await;
 
-        let  res = surf::Client::with_http_client(app)
+        let res = surf::Client::with_http_client(app)
             .get(format!("https://example.com/dinos/{}", &Uuid::new_v4()))
             .await?;
 
@@ -542,7 +558,7 @@ mod tests {
         let db_pool = make_db_pool(&DB_URL).await;
         let app = server(db_pool).await;
 
-        let  res = surf::Client::with_http_client(app)
+        let res = surf::Client::with_http_client(app)
             .put(format!("https://example.com/dinos/{}", &dino.id))
             .body(serde_json::to_string(&dino)?)
             .await?;
@@ -605,7 +621,7 @@ mod tests {
         let db_pool = make_db_pool(&DB_URL).await;
         let app = server(db_pool).await;
 
-        let  res = surf::Client::with_http_client(app)
+        let res = surf::Client::with_http_client(app)
             .delete(format!("https://example.com/dinos/{}", &Uuid::new_v4()))
             .await?;
 
