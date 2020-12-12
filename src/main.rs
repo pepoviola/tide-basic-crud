@@ -408,7 +408,6 @@ mod tests {
         .await?;
 
         // start the server
-        let db_pool = make_db_pool(&DB_URL).await;
         let app = server(db_pool).await;
 
         let res = surf::Client::with_http_client(app)
@@ -454,7 +453,6 @@ mod tests {
         .await?;
 
         // start the server
-        let db_pool = make_db_pool(&DB_URL).await;
         let app = server(db_pool).await;
 
         let mut res = surf::Client::with_http_client(app)
