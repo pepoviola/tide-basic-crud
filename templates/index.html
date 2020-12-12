@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}
+ {{title}}
+{% endblock title %}
+
+{% block content %}
+{% if dinos %}
+    <table class="u-full-width">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Weight</th>
+                <th>Diet</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for dino in dinos%}
+            <tr>
+                <td>{{dino.name}}</td>
+                <td>{{dino.weight}}</td>
+                <td>{{dino.diet}}</td>
+                <td><a href="/dinos/{{dino.id}}/edit"> Edit </a></td>
+                <td><a class="delete" data-id="{{dino.id}}"href="#"> Delete </a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<a href="/dinos/new">Create new Dino</a>
+{% endblock content %}
+
+{% block aditionalScripts %}
+    <script>
+        const links = document.querySelectorAll('.delete');
+
+        for( const link of links ) {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const data = { id : link.dataset.id };
+                api( 'DELETE', data )
+                .then( res => {
+                    // just reload home
+                    window.location.href = '/';
+                })
+                .catch( alert );
+
+            } )
+        }
+    </script>
+{% endblock aditionalScripts %}
