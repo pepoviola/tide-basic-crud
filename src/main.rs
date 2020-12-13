@@ -333,8 +333,8 @@ mod tests {
         dotenv::dotenv().ok();
         async_std::task::block_on(async {
             clear_dinos().await.unwrap();
-        ()
-        } )
+            ()
+        })
     }
 
     #[async_std::test]
