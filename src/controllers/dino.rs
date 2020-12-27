@@ -2,18 +2,18 @@ use super::*;
 
 use tide::{Body, Request, Response};
 
-    use crate::handlers;
+use crate::handlers;
 
-    pub async fn create(mut req: Request<State>) -> tide::Result {
-        let dino: Dino = req.body_json().await?;
-        let db_pool = req.state().db_pool.clone();
+pub async fn create(mut req: Request<State>) -> tide::Result {
+    let dino: Dino = req.body_json().await?;
+    let db_pool = req.state().db_pool.clone();
 
-        let row = handlers::dino::create(dino, &db_pool).await?;
+    let row = handlers::dino::create(dino, &db_pool).await?;
 
-        let mut res = Response::new(201);
-        res.set_body(Body::from_json(&row)?);
-        Ok(res)
-    }
+    let mut res = Response::new(201);
+    res.set_body(Body::from_json(&row)?);
+    Ok(res)
+}
 
 pub async fn list(req: tide::Request<State>) -> tide::Result {
     let db_pool = req.state().db_pool.clone();
