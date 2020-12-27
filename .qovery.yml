@@ -1,0 +1,14 @@
+application:
+  name: tide-basic-crud
+  project: tide-basic-crud
+  publicly_accessible: true
+databases:
+- type: postgresql
+  version: "11.5"
+  name: tide-db
+routers:
+- name: main
+  routes:
+  - application_name: tide-basic-crud
+    paths:
+    - /
