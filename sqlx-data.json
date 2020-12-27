@@ -1,0 +1,179 @@
+{
+  "db": "PostgreSQL",
+  "17dbe8dd16d61aff69f54c9fcf0fa3e06824de38bc6eb436f80ace83a87aede2": {
+    "query": "\n        UPDATE dinos SET name = $2, weight = $3, diet = $4\n        WHERE id = $1\n        returning id, name, weight, diet\n        ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 2,
+          "name": "weight",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 3,
+          "name": "diet",
+          "type_info": "Text"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text",
+          "Int4",
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "42d497a2276083391366f26e02b1af7d7331751f928369aee3e0601de7fc6c3b": {
+    "query": "\n        INSERT INTO dinos (id, name, weight, diet) VALUES\n        ($1, $2, $3, $4) returning id as \"id!\", name, weight, diet\n        ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id!",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 2,
+          "name": "weight",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 3,
+          "name": "diet",
+          "type_info": "Text"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text",
+          "Int4",
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "8d7161207b7018cecf1d90ecdb9c28e7a74ce5ea1ba85b99cd38c28aedc7ec85": {
+    "query": "\n        SELECT  id, name, weight, diet from dinos\n        WHERE id = $1\n        ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 2,
+          "name": "weight",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 3,
+          "name": "diet",
+          "type_info": "Text"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "c8f64e65a795d7227c9c930834178ad9f40246637e2ff3867e039578f6c84ed9": {
+    "query": "\n        SELECT id, name, weight, diet from dinos\n        ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 2,
+          "name": "weight",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 3,
+          "name": "diet",
+          "type_info": "Text"
+        }
+      ],
+      "parameters": {
+        "Left": []
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "ed8b9b3db1610a010414acff6eaecf45ccddbf6970129e4a6dd49a9812bd26f8": {
+    "query": "\n        delete from dinos\n        WHERE id = $1\n        returning id\n        ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  }
+}

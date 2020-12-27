@@ -16,7 +16,7 @@ SET row_security = off;
 
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
@@ -34,9 +34,9 @@ SET default_with_oids = false;
 
 CREATE TABLE dinos (
     id uuid NOT NULL,
-    name text,
-    weight integer,
-    diet text
+    name text NOT NULL,
+    weight integer NOT NULL,
+    diet text NOT NULL
 );
 
 
