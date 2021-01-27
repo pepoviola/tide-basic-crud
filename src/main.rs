@@ -2,18 +2,18 @@ use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use sqlx::Pool;
 use tera::Tera;
+use tide::http::cookies::SameSite;
 use tide::prelude::*;
 use tide::{Error, Server};
-use tide::http::cookies::SameSite;
 use tide_tera::prelude::*;
 use uuid::Uuid;
 
 mod controllers;
 mod handlers;
 
+use controllers::auth;
 use controllers::dino;
 use controllers::views;
-use controllers::auth;
 
 // OAuth deps and const
 use oauth2::{basic::BasicClient, AuthUrl, ClientId, ClientSecret, RedirectUrl, TokenUrl};
@@ -25,7 +25,7 @@ static TOKEN_URL: &str = "https://www.googleapis.com/oauth2/v3/token";
 pub struct State {
     db_pool: PgPool,
     tera: Tera,
-    oauth_google_client: BasicClient
+    oauth_google_client: BasicClient,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -34,7 +34,7 @@ pub struct Dino {
     name: String,
     weight: i32,
     diet: String,
-    user_id: Option<String>
+    user_id: Option<String>,
 }
 
 // #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -68,12 +68,22 @@ pub async fn make_db_pool(db_url: &str) -> PgPool {
 }
 
 fn make_oauth_google_client() -> tide::Result<BasicClient> {
-    let client  =  BasicClient::new(
-    ClientId::new(std::env::var("OAUTH_GOOGLE_CLIENT_ID").expect("missing env var OAUTH_GOOGLE_CLIENT_ID")),
-Some(ClientSecret::new(std::env::var("OAUTH_GOOGLE_CLIENT_SECRET").expect("missing env var OAUTH_GOOGLE_CLIENT_SECRET"))),
-    AuthUrl::new(AUTH_URL.to_string())?,Some(TokenUrl::new(TOKEN_URL.to_string())?),
+    let client = BasicClient::new(
+        ClientId::new(
+            std::env::var("OAUTH_GOOGLE_CLIENT_ID")
+                .expect("missing env var OAUTH_GOOGLE_CLIENT_ID"),
+        ),
+        Some(ClientSecret::new(
+            std::env::var("OAUTH_GOOGLE_CLIENT_SECRET")
+                .expect("missing env var OAUTH_GOOGLE_CLIENT_SECRET"),
+        )),
+        AuthUrl::new(AUTH_URL.to_string())?,
+        Some(TokenUrl::new(TOKEN_URL.to_string())?),
     )
-    .set_redirect_url(RedirectUrl::new(std::env::var("OAUTH_GOOGLE_REDIRECT_URL").expect("missing env var OAUTH_GOOGLE_REDIRECT_URL"))?);
+    .set_redirect_url(RedirectUrl::new(
+        std::env::var("OAUTH_GOOGLE_REDIRECT_URL")
+            .expect("missing env var OAUTH_GOOGLE_REDIRECT_URL"),
+    )?);
 
     Ok(client)
 }
@@ -84,16 +94,22 @@ async fn server(db_pool: PgPool) -> Server<State> {
 
     let oauth_google_client = make_oauth_google_client().unwrap();
 
-    let state = State { db_pool, tera, oauth_google_client };
+    let state = State {
+        db_pool,
+        tera,
+        oauth_google_client,
+    };
 
     let mut app = tide::with_state(state);
 
-    app.with(tide::sessions::SessionMiddleware::new(
-        tide::sessions::MemoryStore::new(),
-        std::env::var("TIDE_SECRET")
-            .expect("Please provide a TIDE_SECRET value of at least 32 bytes")
-            .as_bytes(),
-        ).with_same_site_policy(SameSite::Lax)
+    app.with(
+        tide::sessions::SessionMiddleware::new(
+            tide::sessions::MemoryStore::new(),
+            std::env::var("TIDE_SECRET")
+                .expect("Please provide a TIDE_SECRET value of at least 32 bytes")
+                .as_bytes(),
+        )
+        .with_same_site_policy(SameSite::Lax),
     );
 
     // views
@@ -104,7 +120,8 @@ async fn server(db_pool: PgPool) -> Server<State> {
     // auth
     app.at("/auth/google")
         .get(auth::auth_google)
-        .at( "/authorized").get(auth::auth_google_authorized);
+        .at("/authorized")
+        .get(auth::auth_google_authorized);
 
     app.at("/logout").get(auth::logout);
 
@@ -212,7 +229,7 @@ mod tests {
             name: String::from("test"),
             weight: 50,
             diet: String::from("carnivorous"),
-            user_id: None
+            user_id: None,
         };
 
         let db_pool = make_db_pool(&DB_URL).await;
@@ -242,7 +259,7 @@ mod tests {
             name: String::from("test_get"),
             weight: 500,
             diet: String::from("carnivorous"),
-            user_id: None
+            user_id: None,
         };
 
         let db_pool = make_db_pool(&DB_URL).await;
@@ -288,7 +305,7 @@ mod tests {
             name: String::from("test_get"),
             weight: 500,
             diet: String::from("carnivorous"),
-            user_id: None
+            user_id: None,
         };
 
         let db_pool = make_db_pool(&DB_URL).await;
@@ -356,7 +373,7 @@ mod tests {
             name: String::from("test_update"),
             weight: 500,
             diet: String::from("carnivorous"),
-            user_id: None
+            user_id: None,
         };
 
         let db_pool = make_db_pool(&DB_URL).await;
@@ -406,7 +423,7 @@ mod tests {
             name: String::from("test_update"),
             weight: 500,
             diet: String::from("carnivorous"),
-            user_id: None
+            user_id: None,
         };
 
         // start the server
@@ -432,7 +449,7 @@ mod tests {
             name: String::from("test_update"),
             weight: 500,
             diet: String::from("carnivorous"),
-            user_id: Some(String::from("123"))
+            user_id: Some(String::from("123")),
         };
 
         let db_pool = make_db_pool(&DB_URL).await;
@@ -480,7 +497,7 @@ mod tests {
             name: String::from("test_delete"),
             weight: 500,
             diet: String::from("carnivorous"),
-            user_id: None
+            user_id: None,
         };
 
         let db_pool = make_db_pool(&DB_URL).await;
@@ -540,7 +557,7 @@ mod tests {
             name: String::from("test_delete"),
             weight: 500,
             diet: String::from("carnivorous"),
-            user_id: Some(String::from("123"))
+            user_id: Some(String::from("123")),
         };
 
         let db_pool = make_db_pool(&DB_URL).await;

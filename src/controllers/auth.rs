@@ -1,12 +1,11 @@
 use super::*;
 
-use tide::{Request, Result, Redirect, http};
+use tide::{http, Redirect, Request, Result};
 
-use oauth2::{AuthorizationCode, CsrfToken,Scope,TokenResponse};
 use oauth2::reqwest::async_http_client;
+use oauth2::{AuthorizationCode, CsrfToken, Scope, TokenResponse};
 
 use surf;
-
 
 // static AUTH_GOOGLE_SCOPE_EMAIL: &str = "https://www.googleapis.com/auth/userinfo.email";
 static AUTH_GOOGLE_SCOPE_PROFILE: &str = "https://www.googleapis.com/auth/userinfo.profile";
@@ -22,23 +21,23 @@ struct AuthRequestQuery {
 struct UserInfoResponse {
     // email: String,
     id: String,
-    given_name: String
+    given_name: String,
 }
 
 pub async fn auth_google(req: Request<State>) -> Result {
-    let client  = &req.state().oauth_google_client;
+    let client = &req.state().oauth_google_client;
     let (auth_url, _csrf_token) = client
-    .authorize_url(CsrfToken::new_random)
-    // Set the desired scopes.
-    // .add_scope(Scope::new(AUTH_GOOGLE_SCOPE_EMAIL.to_string()))
-    .add_scope(Scope::new(AUTH_GOOGLE_SCOPE_PROFILE.to_string()))
-    .url();
+        .authorize_url(CsrfToken::new_random)
+        // Set the desired scopes.
+        // .add_scope(Scope::new(AUTH_GOOGLE_SCOPE_EMAIL.to_string()))
+        .add_scope(Scope::new(AUTH_GOOGLE_SCOPE_PROFILE.to_string()))
+        .url();
 
     Ok(Redirect::see_other(auth_url).into())
 }
 
 pub async fn auth_google_authorized(mut req: Request<State>) -> Result {
-    let client  = &req.state().oauth_google_client;
+    let client = &req.state().oauth_google_client;
     let query: AuthRequestQuery = req.query()?;
     let token_result = client
         .exchange_code(AuthorizationCode::new(query.code))
@@ -47,16 +46,16 @@ pub async fn auth_google_authorized(mut req: Request<State>) -> Result {
 
     let token_result = match token_result {
         Ok(token) => token,
-        Err(_) => return Err(tide::Error::from_str(401, "error"))
+        Err(_) => return Err(tide::Error::from_str(401, "error")),
     };
 
     let userinfo: UserInfoResponse = surf::get("https://www.googleapis.com/oauth2/v2/userinfo")
-    .header(
-        http::headers::AUTHORIZATION,
-        format!("Bearer {}", token_result.access_token().secret()),
-    )
-    .recv_json()
-    .await?;
+        .header(
+            http::headers::AUTHORIZATION,
+            format!("Bearer {}", token_result.access_token().secret()),
+        )
+        .recv_json()
+        .await?;
 
     let session = req.session_mut();
     session.insert("user_name", userinfo.given_name)?;

@@ -11,7 +11,7 @@ pub async fn create(mut req: Request<State>) -> tide::Result {
     let session = req.session();
     match session.get("user_id") {
         Some(id) => dino.user_id = Some(id),
-        None => dino.user_id = None
+        None => dino.user_id = None,
     };
 
     let row = handlers::dino::create(dino, &db_pool).await?;
