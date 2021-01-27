@@ -26,6 +26,13 @@
           <li class="navbar-item"><a class="navbar-link" href="/">Home</a></li>
           <li class="navbar-item"><a class="navbar-link" href="https://github.com/pepoviola/tide-basic-crud" target="_blank">GH repo</a></li>
         </ul>
+        <ul class="navbar-list u-pull-right">
+          {% if user_id == "" %}
+            <li class="navbar-item"><a class="navbar-link" href="/auth/google">Login with google</a></li>
+          {% else %}
+            <li class="navbar-item"><a class="navbar-link" href="/logout">Logout</a></li>
+          {% endif %}
+        </ul>
       </div>
     </nav>
   <div class="container">

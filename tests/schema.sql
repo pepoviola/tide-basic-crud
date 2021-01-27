@@ -36,7 +36,8 @@ CREATE TABLE dinos (
     id uuid NOT NULL,
     name text NOT NULL,
     weight integer NOT NULL,
-    diet text NOT NULL
+    diet text NOT NULL,
+    user_id text
 );
 
 
