@@ -51,9 +51,7 @@ jobs:
       run: cargo test --tests
       env:
           DATABASE_URL: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/tide
-          OAUTH_GOOGLE_CLIENT_ID: ""
-          OAUTH_GOOGLE_CLIENT_SECRET: ""
-          OAUTH_GOOGLE_REDIRECT_URL: ""
+          OAUTH_GOOGLE_REDIRECT_URL: "http://localhost:8080/auth/google/authorized"
           TIDE_SECRET: "abcdefghabcdefghabcdefghabcdefgh"
 
     - uses: actions-rs/clippy-check@v1
