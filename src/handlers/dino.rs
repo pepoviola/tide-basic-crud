@@ -6,13 +6,14 @@ pub async fn create(dino: Dino, db_pool: &PgPool) -> tide::Result<Dino> {
     let row: Dino = query_as!(
         Dino,
         r#"
-        INSERT INTO dinos (id, name, weight, diet) VALUES
-        ($1, $2, $3, $4) returning id as "id!", name, weight, diet
+        INSERT INTO dinos (id, name, weight, diet, user_id) VALUES
+        ($1, $2, $3, $4, $5) returning id as "id!", name, weight, diet, user_id
         "#,
         dino.id,
         dino.name,
         dino.weight,
-        dino.diet
+        dino.diet,
+        dino.user_id
     )
     .fetch_one(db_pool)
     .await
@@ -24,7 +25,7 @@ pub async fn list(db_pool: &PgPool) -> tide::Result<Vec<Dino>> {
     let rows = query_as!(
         Dino,
         r#"
-        SELECT id, name, weight, diet from dinos
+        SELECT id, name, weight, diet, user_id from dinos
         "#
     )
     .fetch_all(db_pool)
@@ -38,7 +39,7 @@ pub async fn get(id: Uuid, db_pool: &PgPool) -> tide::Result<Option<Dino>> {
     let row = query_as!(
         Dino,
         r#"
-        SELECT  id, name, weight, diet from dinos
+        SELECT  id, name, weight, diet, user_id from dinos
         WHERE id = $1
         "#,
         id
@@ -74,14 +75,15 @@ pub async fn update(id: Uuid, dino: Dino, db_pool: &PgPool) -> tide::Result<Opti
     let row = query_as!(
         Dino,
         r#"
-        UPDATE dinos SET name = $2, weight = $3, diet = $4
+        UPDATE dinos SET name = $2, weight = $3, diet = $4, user_id = $5
         WHERE id = $1
-        returning id, name, weight, diet
+        returning id, name, weight, diet, user_id
         "#,
         id,
         dino.name,
         dino.weight,
-        dino.diet
+        dino.diet,
+        dino.user_id
     )
     .fetch_optional(db_pool)
     .await

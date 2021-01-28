@@ -5,6 +5,9 @@
 {% endblock title %}
 
 {% block content %}
+{% if user_id != "" %}
+    <div class="greet"><span>Welcome, {{ user_name }}</span></div>
+{% endif %}
 {% if dinos %}
     <table class="u-full-width">
         <thead>
@@ -22,8 +25,18 @@
                 <td>{{dino.name}}</td>
                 <td>{{dino.weight}}</td>
                 <td>{{dino.diet}}</td>
-                <td><a href="/dinos/{{dino.id}}/edit"> Edit </a></td>
-                <td><a class="delete" data-id="{{dino.id}}"href="#"> Delete </a></td>
+                {% if dino.user_id %}
+                    {%if user_id != "" and dino.user_id == user_id %}
+                        <td><a href="/dinos/{{dino.id}}/edit"> Edit </a></td>
+                        <td><a class="delete" data-id="{{dino.id}}"href="#"> Delete </a></td>
+                    {% else %}
+                        <td></td>
+                        <td></td>
+                    {% endif %}
+                {% else %}
+                    <td><a href="/dinos/{{dino.id}}/edit"> Edit </a></td>
+                    <td><a class="delete" data-id="{{dino.id}}"href="#"> Delete </a></td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
