@@ -48,7 +48,7 @@ async fn main() {
 
     tide::log::start();
     let db_url = std::env::var("DATABASE_URL").unwrap();
-    let port = std::env::var("APP_PORT").unwrap_or("8080".to_string());
+    let port = std::env::var("PORT").unwrap_or("8080".to_string());
     let db_pool = make_db_pool(&db_url).await;
 
     let app = server(db_pool).await;
