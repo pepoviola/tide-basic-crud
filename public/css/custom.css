@@ -229,3 +229,40 @@ div.greet {
   font-size: 16px;
   color: #444;
 }
+
+section.hero {
+  padding-top: 20px;
+  text-align: center;
+}
+
+span.tide {
+color: #444;
+  padding: 5px;
+  font-size: 4.7rem;
+  border: 1px solid #DEA584;
+  border-radius: 5px;
+  background-color: #DEA584;
+  box-shadow: 0 0 5px rgba(0,0,0,.1), 0 3px 6px rgba(0,0,0,.05);
+}
+
+span.inspired {
+  font-size: 1.5rem;
+}
+
+pre.explain {
+  white-space: pre-wrap;
+  font-size: 1.7rem;
+  padding: 15px 0;
+}
+
+code.explain {
+  white-space: pre-wrap;
+}
+
+footer {
+  text-align: center;
+  margin-top: 20px;
+  padding: 20px;
+  border-top: 1px solid #ddd;
+  background-color: #efefef;
+}

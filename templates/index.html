@@ -5,9 +5,15 @@
 {% endblock title %}
 
 {% block content %}
+<section class="hero">
 {% if user_id != "" %}
     <div class="greet"><span>Welcome, {{ user_name }}</span></div>
 {% endif %}
+
+        <h1 class="title"><span class="tide">Tide</span> basic CRUD</h1>
+        <pre class="explain">Tide basic CRUD is an example project for exploring <a href="https://github.com/http-rs/tide" target="_blank">Tide</a> framework, you can read the <a href="https://javierviola.com/tags/tide-basic-crud/" target="_blank">post serie</a>.</pre>
+</section>
+
 {% if dinos %}
     <table class="u-full-width">
         <thead>
