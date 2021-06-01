@@ -80,7 +80,7 @@ fn make_oauth_google_client() -> tide::Result<BasicClient> {
         AuthUrl::new(AUTH_URL.to_string())?,
         Some(TokenUrl::new(TOKEN_URL.to_string())?),
     )
-    .set_redirect_url(RedirectUrl::new(
+    .set_redirect_uri(RedirectUrl::new(
         std::env::var("OAUTH_GOOGLE_REDIRECT_URL")
             .expect("missing env var OAUTH_GOOGLE_REDIRECT_URL"),
     )?);
@@ -236,7 +236,7 @@ mod tests {
         let app = server(db_pool).await;
 
         let mut res = surf::Client::with_http_client(app)
-            .post("https://example.com/dinos")
+            .get("https://example.com/dinos")
             .body(serde_json::to_string(&dino)?)
             .await?;
 
