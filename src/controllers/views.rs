@@ -8,8 +8,8 @@ pub async fn index(req: Request<State>) -> tide::Result {
 
     let session = req.session();
     println!("{:?}", session);
-    let user_id: String = session.get("user_id").unwrap_or("".to_string());
-    let user_name: String = session.get("user_name").unwrap_or("".to_string());
+    let user_id: String = session.get("user_id").unwrap_or_else(|| "".to_string());
+    let user_name: String = session.get("user_name").unwrap_or_else(|| "".to_string());
 
     println!(" data {}, {}", user_id, user_name);
 
@@ -27,7 +27,7 @@ pub async fn index(req: Request<State>) -> tide::Result {
 pub async fn new(req: Request<State>) -> tide::Result {
     let tera = req.state().tera.clone();
     let session = req.session();
-    let user_id: String = session.get("user_id").unwrap_or("".to_string());
+    let user_id: String = session.get("user_id").unwrap_or_else(|| "".to_string());
 
     tera.render_response(
         "form.html",
@@ -41,7 +41,7 @@ pub async fn new(req: Request<State>) -> tide::Result {
 pub async fn edit(req: Request<State>) -> tide::Result {
     let tera = req.state().tera.clone();
     let session = req.session();
-    let user_id: String = session.get("user_id").unwrap_or("".to_string());
+    let user_id: String = session.get("user_id").unwrap_or_else(|| "".to_string());
 
     let db_pool = req.state().db_pool.clone();
     let id: Uuid = Uuid::parse_str(req.param("id")?).unwrap();
