@@ -236,7 +236,7 @@ mod tests {
         let app = server(db_pool).await;
 
         let mut res = surf::Client::with_http_client(app)
-            .get("https://example.com/dinos")
+            .post("https://example.com/dinos")
             .body(serde_json::to_string(&dino)?)
             .await?;
 
