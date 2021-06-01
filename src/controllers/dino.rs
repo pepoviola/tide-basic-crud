@@ -54,7 +54,7 @@ pub async fn update(mut req: tide::Request<State>) -> tide::Result {
 
     // auth operation
     let session = req.session();
-    let user_id: String = session.get("user_id").unwrap_or("".to_string());
+    let user_id: String = session.get("user_id").unwrap_or_else(|| "".to_string());
     let row = handlers::dino::get(id, &db_pool).await?;
     if let Some(dino) = row {
         if dino.user_id.is_some() && dino.user_id.unwrap() != user_id {
@@ -83,7 +83,7 @@ pub async fn delete(req: tide::Request<State>) -> tide::Result {
 
     // auth operation
     let session = req.session();
-    let user_id: String = session.get("user_id").unwrap_or("".to_string());
+    let user_id: String = session.get("user_id").unwrap_or_else(|| "".to_string());
     let row = handlers::dino::get(id, &db_pool).await?;
     if let Some(dino) = row {
         if dino.user_id.is_some() && dino.user_id.unwrap() != user_id {

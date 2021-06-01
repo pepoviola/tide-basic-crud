@@ -5,7 +5,7 @@ use tide::{http, Redirect, Request, Result};
 use oauth2::reqwest::async_http_client;
 use oauth2::{AuthorizationCode, CsrfToken, Scope, TokenResponse};
 
-use surf;
+// use surf;
 
 // static AUTH_GOOGLE_SCOPE_EMAIL: &str = "https://www.googleapis.com/auth/userinfo.email";
 static AUTH_GOOGLE_SCOPE_PROFILE: &str = "https://www.googleapis.com/auth/userinfo.profile";

@@ -48,7 +48,7 @@ async fn main() {
 
     tide::log::start();
     let db_url = std::env::var("DATABASE_URL").unwrap();
-    let port = std::env::var("PORT").unwrap_or("8080".to_string());
+    let port = std::env::var("PORT").unwrap_or_else(|_| "8080".to_string());
     let db_pool = make_db_pool(&db_url).await;
 
     let app = server(db_pool).await;
@@ -80,7 +80,7 @@ fn make_oauth_google_client() -> tide::Result<BasicClient> {
         AuthUrl::new(AUTH_URL.to_string())?,
         Some(TokenUrl::new(TOKEN_URL.to_string())?),
     )
-    .set_redirect_url(RedirectUrl::new(
+    .set_redirect_uri(RedirectUrl::new(
         std::env::var("OAUTH_GOOGLE_REDIRECT_URL")
             .expect("missing env var OAUTH_GOOGLE_REDIRECT_URL"),
     )?);
