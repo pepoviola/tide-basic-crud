@@ -29,7 +29,7 @@ RUN cargo build --release --bin tide-basic-crud
 FROM debian:buster-slim AS runtime
 WORKDIR /app
 RUN apt-get update -y \
-    && apt-get install -y --no-install-recommends openssl \
+    && apt-get install -y --no-install-recommends openssl libcurl4 \
     # Clean up
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /app/target/release/tide-basic-crud tide-basic-crud
