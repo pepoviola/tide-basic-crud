@@ -13,11 +13,14 @@ The code of this repo is also commented/explained in this [post posts](https://j
  - GH Actions for CI
  - I currently using [dokku](https://github.com/dokku/dokku) and you can find the working environment at https://tide-basic-crud.labs.javierviola.com/
 
+---
 
 TODO:
-[] Schema validation
-[] Move front-end to wasm (localghost/yew)
-[] Add telemetry
-[] Better error handling
-[] Add other resources (entities) and refactor structure.
-[] Add tutorial on how to run locally
+```
+[ ] Schema validation
+[ ] Move front-end to wasm (localghost/yew)
+[ ] Add telemetry
+[ ] Better error handling
+[ ] Add other resources (entities) and refactor structure.
+[ ] Add tutorial on how to run locally
+```
