@@ -47,7 +47,7 @@ async fn main() {
     dotenv::dotenv().ok();
 
     tide::log::start();
-    let db_url = std::env::var("DATABASE_URL").unwrap();
+    let db_url = std::env::var("DATABASE_URL").expect("Missing `DATABASE_URL` env variable, needed for running the server");
     let port = std::env::var("PORT").unwrap_or_else(|_| "8080".to_string());
     let db_pool = make_db_pool(&db_url).await;
 
