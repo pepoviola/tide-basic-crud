@@ -252,9 +252,6 @@ mod tests {
     #[async_std::test]
     async fn create_dino_without_key() -> tide::Result<()> {
         dotenv::dotenv().ok();
-        // clear_dinos()
-        //     .await
-        //     .expect("Failed to clear the dinos table");
 
         let dino = json!( {
             "name": String::from("test"),
