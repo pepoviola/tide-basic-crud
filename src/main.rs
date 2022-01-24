@@ -30,6 +30,7 @@ pub struct State {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Dino {
+    #[serde(default = "Uuid::new_v4")]
     id: Uuid,
     name: String,
     weight: i32,
@@ -245,6 +246,34 @@ mod tests {
 
         let d: Dino = res.body_json().await?;
         assert_json_eq!(dino, d);
+        Ok(())
+    }
+
+    #[async_std::test]
+    async fn create_dino_without_key() -> tide::Result<()> {
+        dotenv::dotenv().ok();
+        // clear_dinos()
+        //     .await
+        //     .expect("Failed to clear the dinos table");
+
+        let dino = json!( {
+            "name": String::from("test"),
+            "weight": 50,
+            "diet": String::from("carnivorous")
+        });
+
+        let db_pool = make_db_pool(&DB_URL).await;
+        let app = server(db_pool).await;
+
+        let mut res = surf::Client::with_http_client(app)
+            .post("https://example.com/dinos")
+            .body(serde_json::to_string(&dino)?)
+            .await?;
+
+        assert_eq!(201, res.status());
+
+        let d: Dino = res.body_json().await?;
+        assert_eq!(*dino.get("name").unwrap(), json!(d.name));
         Ok(())
     }
 
